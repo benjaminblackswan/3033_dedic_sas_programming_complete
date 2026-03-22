@@ -173,7 +173,11 @@ proc print data=houseprice; run;
 ```
 
 
-## 17 more on creating variables
+## 17. More on creating variables
+
+**CARDS** statement is the legacy version of **DATALINES** statement
+
+
 
 ```
 data sales;
@@ -182,46 +186,420 @@ Cards;
 Greg 10 2 40 0
 John 15 5 10 100
 Lisa 50 10 15  50
-Mark 50 0 5 20
+Mark 20 0 5 20
 ;
+
+run;
+
+proc print data = sales; run;
+```
+
+<img width="360" height="134" alt="image" src="https://github.com/user-attachments/assets/116286d1-0676-4faa-a6ef-5db286c2527e" />
+
+Adding new variables
+
+```
+data sales;
+input Name$ Sales_1-Sales_4;
+Total = Sales_1 + Sales_2 +Sales_3 +Sales_4;
+Cards;
+Greg 10 2 40 0
+John 15 5 10 100
+Lisa 50 10 15  50
+Mark 20 0 5 20
+;
+
+run;
+
+proc print data = sales; run;
+```
+
+<img width="411" height="132" alt="image" src="https://github.com/user-attachments/assets/939552e3-79ed-4797-a536-e8b86313de90" />
+
+
+## 18. Automatic Variables
+
+```
+data test;
+input x y;
+if _error_ = 1 then
+put "** Error in row " _n_ " **";
+datalines;
+1 1
+2 3
+3 n
+4 4
 run;
 ```
 
 
+<img width="547" height="233" alt="image" src="https://github.com/user-attachments/assets/35b6ea61-8327-4c48-95e7-e2adaa62218e" />
+
+<img width="870" height="430" alt="image" src="https://github.com/user-attachments/assets/9c396412-0143-40f6-803b-a9655f30c234" />
 
 
 
+## 19. Filtering Observations (so only some data show up)
+
+```
+data houseprice;
+infile '/home/u62043935/Dedic/houseprice.txt';
+input type$ price tax;
+run;
+
+data filter;
+set houseprice;
+if price<200000;
+
+proc print data=filter; run;
+```
+
+<img width="213" height="61" alt="image" src="https://github.com/user-attachments/assets/7f18fcf5-1c3f-4452-b2e9-dc4c0de33d26" />
+
+
+## 21. If-then Conditional Logic
+
+
+### Adding a conditional logic, if name is Greg, then total is 0.
+
+```
+Data sales;
+input Name$ Sales_1-Sales_4;
+Total = Sales_1 + Sales_2 +Sales_3 +Sales_4;
+IF Name='Greg' THEN Total=0;
+Cards;
+Greg 10 2 40 0
+John 15 5 10 100
+Lisa 50 10 15  50
+Mark 20 0 5 20
+;
+run;
+
+proc print data=sales;run;
+```
+<img width="411" height="130" alt="image" src="https://github.com/user-attachments/assets/699f65b9-5672-4a26-aa4e-e8794955fe96" />
 
 
 
+### Adding two conditions in the IF statement.
+
+```
+Data sales;
+input Name$ Sales_1-Sales_4;
+Total = Sales_1 + Sales_2 +Sales_3 +Sales_4;
+Fired='';
+IF Name='Greg' and Total =>52 THEN Fired='N';
+Cards;
+Greg 10 2 40 0
+John 15 5 10 100
+Lisa 50 10 15  50
+Mark 20 0 5 20
+;
+run;
+
+proc print data=sales;run;
+```
+
+<img width="459" height="130" alt="image" src="https://github.com/user-attachments/assets/3c113adb-f2d1-42b9-81f5-e34d086d353d" />
 
 
+### Using **DO** statement to have two more actions in the **THEN** statement
+
+```
+Data sales;
+input Name$ Sales_1-Sales_4;
+Total = Sales_1 + Sales_2 +Sales_3 +Sales_4;
+Fired='';
+IF Name='Greg' and Total =>52 THEN
+DO;
+Fired='N';
+Total = Total + 10;
+end;
+
+Cards;
+Greg 10 2 40 0
+John 15 5 10 100
+Lisa 50 10 15  50
+Mark 20 0 5 20
+;
+run;
+
+proc print data=sales; run;
+```
+
+<img width="457" height="135" alt="image" src="https://github.com/user-attachments/assets/bafb4164-5064-4c1e-9b7d-d0583309b462" />
 
 
+### Using IF THEN ELSE IF THEN
+
+```
+Data sales;
+input Name$ Sales_1-Sales_4;
+Total = Sales_1 + Sales_2 +Sales_3 +Sales_4;
+Fired='';
+Performance='';
+
+IF total =<10 then Performance = 'l';
+else if total < 50 then performance = 'a';
+else performance = 'h';
+
+DATALINES;
+Greg 10 2 40 0
+John 15 5 10 100
+Lisa 50 10 15  50
+Mark 20 0 5 20
+;
+run;
+
+proc print data=sales; run;
+```
+
+<img width="558" height="130" alt="image" src="https://github.com/user-attachments/assets/d4dbaa66-fe69-49fd-ac10-c26263cabfbd" />
 
 
+## 22. DO Iterative Loop and Variations (DO WHILE, DO Until)
+
+### The Do Loop
+
+```
+data A;
+do i = 1 to 5;
+y = i*2;
+output;
+end;
+run;
+
+proc print data = A; run;
+```
+
+<img width="105" height="155" alt="image" src="https://github.com/user-attachments/assets/316a8a23-d14f-475c-bdc3-4697a37ad8cd" />
+
+The default increment is 1, if you want to change to the different value, use the BY statement.
+
+```
+data A;
+do i = 1 to 5 by 0.5;
+y = i*2;
+output;
+end;
+run;
+
+proc print data = A; run;
+```
+
+<img width="112" height="260" alt="image" src="https://github.com/user-attachments/assets/eb9e6e44-63f0-4dfa-a39e-73dc3f4ca2ac" />
+
+### DO WHILE
+
+The do while loop evaluates before the loop starts, may have a minimum execution of 0 times.
+
+```
+data A;
+DO i = 1 to 5 by 0.5 WHILE (y<8);
+y = i*2;
+output;
+end;
+run;
+
+proc print data = A; run;
+```
+
+<img width="112" height="207" alt="image" src="https://github.com/user-attachments/assets/811c5340-be9d-4003-bed4-60f269c79a7b" />
+
+Output goes up to Y = 8 because the DO WHILE condition evaluates Y<8 for i = 3.5 and y = 7 which is still True, so i = 4.0 and y = 8 is still true.
 
 
+### DO UNTIL
+
+```
+data A;
+do i = 1 to 5 by 0.5 until (y<8);
+y = i*2;
+output;
+end;
+run;
+
+proc print data = A; run;
+```
+
+<img width="94" height="54" alt="image" src="https://github.com/user-attachments/assets/81f1f2fe-8042-4a31-8dff-059e3a26750d" />
+
+The DO UNTIL loop evaluates after each iteration, so it must run at least once. In this situation, this loop will run until the y<8 condition is met, which it does after one single iteration for i = 1, y=2 (which is less than 8).
+
+### FOR EACH LOOP
+
+```
+data A;
+do v = 1,5,9,10,15;
+y = v*2;
+output;
+end;
+run;
+
+proc print data = A; run;
+```
+
+<img width="109" height="153" alt="image" src="https://github.com/user-attachments/assets/d03264b6-f69c-4bc9-82ba-01169e24c34b" />
+
+## 23. More on DO Group Processing (without index/counter variable)
+
+```
+data A;
+input years;
+datalines;
+4
+3
+6
+3
+9
+runs;
+
+data B;
+set A;
+if years > 5 then
+DO;
+months=years*12;
+put years= months=;
+end;
+else yearsleft=5-years;
+run;
+
+proc print data=B; run;
+```
+
+<img width="234" height="155" alt="image" src="https://github.com/user-attachments/assets/699c4735-a189-414a-91e8-bc061dd0fa80" />
 
 
+## 24. More on the WHERE Expression/Statement
+
+### As part of PROC SQL
+
+```
+Data sales;
+input Name$ Sales_1-Sales_4;
+Total = Sales_1 + Sales_2 +Sales_3 +Sales_4;
+Cards;
+Greg 10 2 40 0
+John 15 5 10 100
+Lisa 50 10 15  50
+Mark 20 0 5 20
+;
+run;
 
 
+PROC SQL;
+select total from sales
+where total > 50;
+```
+
+<img width="52" height="104" alt="image" src="https://github.com/user-attachments/assets/b9358ae1-ac23-4bef-b870-53e3ce8a8983" />
+
+### As part of PROC PRINT
+
+```
+Data sales;
+input Name$ Sales_1-Sales_4;
+Total = Sales_1 + Sales_2 +Sales_3 +Sales_4;
+Cards;
+Greg 10 2 40 0
+John 15 5 10 100
+Lisa 50 10 15  50
+Mark 20 0 5 20
+;
+run;
 
 
+proc print data = sales (where=(total>50));
+run;
+```
+
+<img width="410" height="102" alt="image" src="https://github.com/user-attachments/assets/7ffb0bff-0e8c-424c-96c7-f7993e96bb1b" />
 
 
+```
+Data sales;
+input Name$ Sales_1-Sales_4;
+Total = Sales_1 + Sales_2 +Sales_3 +Sales_4;
+Cards;
+Greg 10 2 40 0
+John 15 5 10 100
+Lisa 50 10 15  50
+Mark 20 0 5 20
+;
+run;
 
 
+proc print data = sales;
+where total > 50;
+run;
+```
+
+<img width="412" height="103" alt="image" src="https://github.com/user-attachments/assets/6bbd764b-8fca-46d2-ab7c-006527be1ea9" />
+
+## 26. Sorting Observations (PROC SORT and BY statements)
 
 
+```
+data houseprice;
+infile '/home/u62043935/Dedic/houseprice.txt';
+input type$ price tax;
+run;
 
+proc sort data=houseprice out=houseprice2;
+by tax;
+run;
 
+proc print data=houseprice2; run;
 
+proc sort data=houseprice out=houseprice2;
+by descending tax;
+run;
 
+proc print data=houseprice2; run;
+```
 
+Now the output is sorted by the Tax column in ascending order.
 
+<img width="237" height="318" alt="image" src="https://github.com/user-attachments/assets/4f8a282a-017d-4885-becd-306d9843e8d9" />
 
+## 27. Merging Two Data Sets
 
+```
+data houseprice;
+infile '/home/u62043935/Dedic/houseprice.txt';
+input type$ price tax;
+run;
+
+proc print data = houseprice; run;
+
+data newhomes;
+infile '/home/u62043935/Dedic/newhomes.txt';
+input type$ price tax;
+run;
+
+proc print data = newhomes; run;
+
+proc sort data = houseprice out=houseprice2;
+by price;
+run;
+
+proc sort data = newhomes out=newhomes2;
+by price;
+run;
+
+data newcollections;
+merge houseprice2 newhomes2;
+by price;
+run;
+
+proc print data = newcollections; run;
+```
+
+<img width="227" height="544" alt="image" src="https://github.com/user-attachments/assets/dfd90942-408a-4a96-b04b-669ddf569330" />
+
+see how the data is in ascending order because the PROC SORT was in ascending order. 
+
+### In Descending order
 
 
 
