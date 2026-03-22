@@ -601,35 +601,228 @@ see how the data is in ascending order because the PROC SORT was in ascending or
 
 ### In Descending order
 
+```
+data houseprice;
+infile '/home/u62043935/Dedic/houseprice.txt';
+input type$ price tax;
+run;
+
+proc print data = houseprice; run;
+
+data newhomes;
+infile '/home/u62043935/Dedic/newhomes.txt';
+input type$ price tax;
+run;
+
+proc print data = newhomes; run;
+
+proc sort data = houseprice out=houseprice2;
+by descending price;
+run;
+
+proc sort data = newhomes out=newhomes2;
+by descending price;
+run;
+
+data newcollections;
+merge houseprice2 newhomes2;
+by descending price;
+run;
+
+proc print data = newcollections; run;
+```
+
+<img width="211" height="515" alt="image" src="https://github.com/user-attachments/assets/9dd132d3-6f2d-4d45-996f-afe1b1af5fe1" />
+
+
+**note: the sort order in the PROC SORT must be the same as the DATA STEP, otherwise you will not get the correct sort order.**
+
+## 28. Using SET statement to Merge
+
+```
+Data sales1;
+input Name$ Sales_1-Sales_4;
+Total = Sales_1 + Sales_2 +Sales_3 +Sales_4;
+Cards;
+Greg 10 2 40 0
+John 15 5 10 100
+Lisa 50 10 15  50
+Mark 20 0 5 20
+run;
+
+proc print data=sales1; run;
+
+Data sales2;
+input Names$ Sales_1-Sales_4;
+Total = Sales_1 + Sales_2 +Sales_3 +Sales_4;
+Cards;
+Eric 17 5 40 0
+Lori 15 12 10 100
+Bill 50 14 15  50
+Mark 22 3 5 16
+run;
+
+proc print data=sales2; run;
+
+data mergesales;
+set sales1 sales2(rename=(Names=Name));
+run;
+
+proc print data=mergesales; run;
+```
+
+<img width="409" height="619" alt="image" src="https://github.com/user-attachments/assets/a290586a-064b-416b-a72d-84e17c81c7a4" />
+
+
+## 29. Data Reduction and Cleaning your Data
+
+### Using Keep
+
+```
+data newhomes;
+input type$ price tax;
+datalines;
+duplex 150000 0.15
+duplex 160000 0.18
+duplex 180000 0.15
+run;
+
+data reducednewhomes;
+set newhomes;
+keep type price;
+run;
+
+proc print data=reducednewhomes; run;
+```
+
+<img width="161" height="102" alt="image" src="https://github.com/user-attachments/assets/26464526-a209-4733-8018-7c07b1e74e20" />
+
+### Using Drop
+
+```
+data newhomes;
+input type$ price tax;
+datalines;
+duplex 150000 0.15
+duplex 160000 0.18
+duplex 180000 0.15
+run;
+
+data reducednewhomes;
+set newhomes;
+drop type price;
+run;
+
+proc print data=reducednewhomes; run;
+```
+
+<img width="92" height="105" alt="image" src="https://github.com/user-attachments/assets/0eee403b-8c5a-446f-a03a-2c42a5727896" />
+
+### Rename variables
+
+```
+data newhomes;
+input x$ y z;
+datalines;
+duplex 150000 0.15
+duplex 160000 0.18
+duplex 180000 0.15
+run;
+
+data cleannewhomes; set newhomes;
+rename x=type
+		y=price
+		z=tax;
+run;
+
+proc print data = cleannewhomes; run;
+```
+
+<img width="208" height="108" alt="image" src="https://github.com/user-attachments/assets/1ebf9fe4-d90c-45be-8f56-2bd84316935c" />
 
 
 
+### using LABEL statement
+
+```
+data newhomes;
+input x$ y z;
+datalines;
+duplex 150000 0.15
+duplex 160000 0.18
+duplex 180000 0.15
+run;
+
+data cleannewhomes; set newhomes;
+rename x=type
+		y=price
+		z=tax;
+run;
+
+	
+	data cleannewhomes; set cleannewhomes;
+	label type='Type of Home'
+		  price='Price of Home'
+		  tax='Tax Percentage of Home';
+		  run;
+		  
+	proc freq data=cleannewhomes;
+	table type price tax;
+	run;
+```
+
+<img width="396" height="474" alt="image" src="https://github.com/user-attachments/assets/5ae0f4f8-7836-4870-a1ac-898b1f8f3c0d" />
+
+## 30. LENGTH statement
+
+```
+data mydata;
+length age 3 sex$ 6 bmi 8 children 3 smoker$ 3 region$ 15 charges 8;
+infile "/home/u62043935/Dedic/insurance.csv" DSD MISSOVER Firstobs=2;
+input age sex$ bmi children smoker$ region$ charges;
+run;
+
+proc print data=mydata; run;
+```
+
+<img width="493" height="740" alt="image" src="https://github.com/user-attachments/assets/7c6ee1fd-186d-45ea-a7e0-bf363aa204c1" />
 
 
+## 31. Creating a Counting (Enumeration) Variable
 
+```
+data studentscores;
+input gender score;
+datalines;
+1 48
+1 45
+2 50
+2 42
+1 41
+2 51
+1 52
+1 43
+2 52
+; 
 
+run;
 
+proc sort data=studentscores;
+by gender;
+runs;
 
+proc print data=studentscores; run;
 
+data studentscore1; set studentscores;
+count + 1;
+by gender;
+if first.gender then count=1;
+run;
 
+proc print data=studentscore1; run;
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<img width="217" height="572" alt="image" src="https://github.com/user-attachments/assets/9f2783e3-79c3-426a-9c2e-07387d1d6b6b" />
 
 
 
