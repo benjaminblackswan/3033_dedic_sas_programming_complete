@@ -206,13 +206,143 @@ Note: the default behaviour of **COMPRESS**  is to get rid of spaces, but if you
 
 ## 44. Input and Put Functions
 
+### character variable to number
+
+```
+data inputfunc;
+input sale $9.;
+numsale = input(sale, comma9.);
+datalines;
+6,515,353
+;
+runs;
+
+proc print data=inputfunc; run;
+
+proc contents data=inputfunc; run;
+```
+<img width="1017" height="871" alt="image" src="https://github.com/user-attachments/assets/3651b95f-90bb-4585-8a1d-34abce779a2e" />
+
+### number to character variable
+
+```
+data inputfunc;
+input sale;
+charsale = put(sale, 7.);
+datalines;
+6515353
+;
+runs;
+
+proc print data=inputfunc; run;
+
+proc contents data=inputfunc; run;
+```
+
+<img width="999" height="867" alt="image" src="https://github.com/user-attachments/assets/9aeefcc9-fd24-4f89-8b49-c385f66ee39e" />
+
+## 45. CATX function
+
+```
+data bringittogether;
+separator = ',';
+first = '    Larry';
+last = 'Larryson    ';
+result = catx(separator, first, last);
+drop separator;
+run;
+
+proc print data =bringittogether; run;
+```
+
+
+<img width="245" height="53" alt="image" src="https://github.com/user-attachments/assets/99108d31-6cc7-4fdf-8d40-d8c9224d3a51" />
+
+
+## 46. SCAN function
+
+```
+data bringittogether;
+separator = ',';
+first = '    Larry';
+last = 'Larryson    ';
+result = catx(separator, first, last);
+scann = scan(result, 1);
+drop separator;
+run;
+
+proc print data =bringittogether; run;
+```
+
+<img width="314" height="62" alt="image" src="https://github.com/user-attachments/assets/c6b395f6-cf3f-4ea8-8981-e6c85d98777f" />
 
 
 
+## 48. Coalesce function
+
+```
+data coalesce;
+input home cell;
+numavailable=coalesce(home, cell);
+datalines;
+6578975
+6448565
+run;
+
+proc print data=coalesce; run;
+```
+
+<img width="281" height="61" alt="image" src="https://github.com/user-attachments/assets/1fd79be4-b9e6-4865-8582-f22693df3866" />
 
 
 
+## 49. Verify function
 
+```
+data errors valid;
+input id$ stage : $5.;
+if verify(stage, 'abcd') then output errors;
+else output valid;
+datalines;
+001 aabcd
+002 aabqc
+;
+run;
+
+proc print data=errors; title 'Errors dataset'; run;
+
+proc print data=valid; title 'Valid dataset'; run;
+```
+
+<img width="140" height="230" alt="image" src="https://github.com/user-attachments/assets/9336b1f9-6522-441c-8026-e186c545eb3f" />
+
+
+## 50. Substr function
+
+### using SUBSTR to extract a portion of a string.
+
+```
+data news;
+date='06MAY98';
+month=substr(date, 3, 5);
+
+proc print data=news; run;
+```
+
+<img width="165" height="58" alt="image" src="https://github.com/user-attachments/assets/242c8cb0-b152-4677-9a2f-9b82511b1e1c" />
+
+### Using SUBSTR to replace a portion of a string
+
+```
+data news;
+date='06MAY98';
+
+month = substr(date, 6, 2) = '16'; 
+
+proc print data=news; run;
+```
+
+<img width="121" height="59" alt="image" src="https://github.com/user-attachments/assets/d28fc09b-38a3-442a-b425-e4fa83284984" />
 
 
 
