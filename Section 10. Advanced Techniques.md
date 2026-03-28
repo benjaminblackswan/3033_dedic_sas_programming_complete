@@ -76,8 +76,3 @@ proc print data=rollingquarter3; run;
 
 
 
-
-
-
-
-## 54. Flexibility Programming 2 - Keeping the Non-Technical User in Mind
