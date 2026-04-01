@@ -85,42 +85,6 @@ quit;
 <img width="478" height="156" alt="image" src="https://github.com/user-attachments/assets/aaf06377-f239-4454-bf8c-4f5b1ccc5c92" />
 
 
-```
-## 79
-
-data idfname;
-input empid $ fname $;
-datalines;
-000123 John
-000124 Mary
-000125 Shanan
-000126 Jerry
-000127 Samantia
-000128 Doona
-;
-run;
-
-data contactinfo;
-input empid $ lname $20.;
-datalines;
-000123 Marris
-000333 Ducet
-000444 Slater
-000126 Smith
-000127 Jefferson
-000128 Barrister
-;
-run;
-
-proc sql;
-select idfname.*, lname
-from idfname
-left join contactinfo
-on idfname.empid = contactinfo.empid
-order by empid
-;
-quit;
-```
 
 
 ## 79. How to Perform a Left/Right Join
