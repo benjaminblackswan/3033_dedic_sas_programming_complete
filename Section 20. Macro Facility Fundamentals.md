@@ -357,5 +357,70 @@ John 87
 Lisa 98
 Mark 104
 run;
+
+%macro average;
+
+%do i = 2005 %to 2010;
+
+proc means data = yr&i;
+var sales;
+title "Average Sales from &i";
+run;
+%end;
+%mend;
+
+%average;
 ```
+
+<img width="410" height="1126" alt="image" src="https://github.com/user-attachments/assets/1a3a871e-0f28-40fa-abb9-c732453f2490" />
+
+
+## 120. Debugging Options
+
+
+### Mprint
+Add `options mprint;` to get generated SAS code in the log.
+
+```
+options mprint;
+%macro average;
+
+%do i = 2005 %to 2010;
+
+proc means data = yr&i;
+var sales;
+title "Average Sales from &i";
+run;
+%end;
+%mend;
+
+%average;
+```
+
+<img width="866" height="703" alt="image" src="https://github.com/user-attachments/assets/bf62412a-eac4-4c8c-84a0-7cf6e3e7b7ee" />
+
+### Mlogic
+
+```
+options mlogic;
+%macro average;
+
+%do i = 2005 %to 2010;
+
+proc means data = yr&i;
+var sales;
+title "Average Sales from &i";
+run;
+%end;
+%mend;
+
+%average;
+```
+
+<img width="1100" height="634" alt="image" src="https://github.com/user-attachments/assets/5d6d55d7-0e03-4e62-83f8-514204335c4d" />
+
+
+
+## 121. Storing Macros (External)
+
 
