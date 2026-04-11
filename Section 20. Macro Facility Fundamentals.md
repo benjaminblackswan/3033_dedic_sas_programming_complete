@@ -424,3 +424,183 @@ run;
 ## 121. Storing Macros (External)
 
 
+save a macro
+
+<img width="1153" height="745" alt="image" src="https://github.com/user-attachments/assets/381e3564-c0e1-44f6-b6a8-2e38503258b2" />
+
+
+In a new SAS program
+
+involve the saved macro using `%INCLUDE`
+
+```
+%include '/home/u62043935/Dedic/Dedic_Macro_ReportConditions.sas' /source2;
+```
+
+
+## Assignment 5: Macro Assignment 1
+
+Controlling when the loop ends
+
+```
+data yr2005;
+input name $ sales;
+datalines;
+Greg 10
+John 15
+Lisa 50
+Mark 20
+run;
+
+data yr2006;
+input name $ sales;
+datalines;
+Greg 15
+John 35
+Lisa 45
+Mark 34
+run;
+
+data yr2007;
+input name $ sales;
+datalines;
+Greg 67
+John 34
+Lisa 45
+Mark 23
+run;
+
+data yr2008;
+input name $ sales;
+datalines;
+Greg 54
+John 32
+Lisa 46
+Mark 57
+run;
+
+data yr2009;
+input name $ sales;
+datalines;
+Greg 77
+John 45
+Lisa 78
+Mark 87
+run;
+
+data yr2010;
+input name $ sales;
+datalines;
+Greg 99
+John 87
+Lisa 98
+Mark 104
+run;
+
+options mprint mlogic;
+%macro average(num);
+
+%do i = 2005 %to &num;
+
+proc means data = yr&i;
+var sales;
+title "Average Sales from &i";
+run;
+%end;
+%mend;
+
+%average(2007);
+```
+
+<img width="511" height="566" alt="image" src="https://github.com/user-attachments/assets/c9078a60-1f38-474f-ae8c-38ad086cbb97" />
+
+## 123. Logistic Macro, Case Study
+
+
+Note: there is already a file called train.csv in the downloaded zip for this course, this is not the correct dataset for this video. the correct train.csv is downloaded from the video resources for this video, I save it as **train_logistic_macro_case_study.csv**
+
+```
+data train;
+infile "/home/u62043935/Dedic/train_logistic_macro_case_study.csv" DSD missover firstobs=2;
+input passenger survived pclass Name $ Sex $ Age SibSp Parch Ticket $ Fire Cabin $ Embarked $;
+run; 
+
+%macro logitma(inpdata, depvar, indvar=, myout=_out);
+%let k=1;
+%let dep = %scan(&depvar, &k);
+%do %while (&dep NE);
+title "The dependent variable is &depvar";
+title2 "The independent variable is &indvar";
+proc logistic data = &inpdata outest=est&k;
+model &dep = &indvar;
+run;
+%let k=%eval(&k + 1);
+%let dep=%scan(&depvar, &k);
+%end;
+data &myout;
+set
+%do i= 1 %to &k -1;
+est&i
+%end;
+;
+run;
+%mend;
+
+%logitma(train, Survived, indvar=age, myout = myparm);
+```
+
+<img width="624" height="1309" alt="image" src="https://github.com/user-attachments/assets/8fe735fe-952c-4a30-a3cb-6365f2754377" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
